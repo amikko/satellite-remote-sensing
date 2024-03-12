@@ -19,6 +19,8 @@
 <!--
 TODO:
 - rayleigh-sironta + paineen säätö
+- akselit
+- selitys
 - aerosolikerros / pilvi
 - hostaus netissä
 - 2stream
@@ -32,7 +34,7 @@ TODO:
   </head>
   <body>
     <h1>Interactive satellite remote sensing demo</h1>
-    <p>This page demonstrates the retrieval process of the column profile of atmospheric methane using a Sun-viewing ground-based spectrometer. Drag the sliders below and try to minimize the difference between the simulated and measured spectra. </p>
+    <p>Drag the sliders and observe what happens!</p>
     <!--<img src="https://i.postimg.cc/rwXYj7xH/abs-moomin.jpg">-->
 
     <div class="float-container">
@@ -42,6 +44,8 @@ TODO:
     <br>
     <div class="float-container">
       <div class="float-child">
+        <div><input type="checkbox" id="fixaxtick" name="fixedaxes">Fixed y-axes</div>
+        <div><input type="checkbox" id="turbotick" name="turbomode">CH4 turbo mode!</div>
         <div class="slidecontainer">
           Stratospheric CH4 (30 km): <div id="ppb_30km"></div><input oninput="update_plots()" type="range" min="0" max="80" value="40" class="slider" id="ch4_30km">
         </div>
@@ -107,19 +111,25 @@ TODO:
         var view_angle = 40;
         var alts = [0,7,16,40];
         var turbo_mode = true;
-        if (turbo_mode) {
-          var base_prof = [5.2e13, 1.5e13, 5.5e11];
-        } else {
-          var base_prof = [5.2e13 / 40, 1.5e13 / 40, 5.5e11 / 40];
-        }
+
+        //var base_prof = [5.2e13, 1.5e13, 5.5e11];
+
+        var base_prof = [5.2e13 / 40, 1.5e13 / 40, 5.5e11 / 40];
+
         var mults = [32, 10, 22];
         var n_dens = [2.731e19, 7.936e18, 2.896e17];
         var real_prof = [base_prof[0] * mults[0], base_prof[1] * mults[1], base_prof[2] * mults[2]];
 
         function get_simu_params() {
-          return [base_prof[0] * document.getElementById('ch4_0km').value,
-                  base_prof[1] * document.getElementById('ch4_10km').value,
-                  base_prof[2] * document.getElementById('ch4_30km').value,
+          var turbomode = document.getElementById('turbotick').checked
+          if (turbomode) {
+            var mult = 500
+          } else {
+            var mult = 1
+          }
+          return [base_prof[0] * document.getElementById('ch4_0km').value * mult,
+                  base_prof[1] * document.getElementById('ch4_10km').value * mult,
+                  base_prof[2] * document.getElementById('ch4_30km').value * mult,
                   document.getElementById('sza_slider').value,
                   document.getElementById('vza_slider').value,
                   document.getElementById('lambert_slider').value / 100.0];
@@ -185,14 +195,36 @@ TODO:
           var spectral_data = [spec_guess];
           var residual = [spec_residual]
 
-          var layout_s = {
-            title: 'Transmittance'
-          }
-          var layout_r = {
-            title: 'Measured spectrum',
-            //yaxis: {
-            //  range: [0.0, 1.0],
-            //}
+          fixaxes = document.getElementById('fixaxtick').checked
+          if (fixaxes) {
+            var layout_s = {
+              title: 'Transmittance',
+              yaxis: {
+                      range: [0.0, 0.1]
+                    }
+
+            }
+            var layout_r = {
+              title: 'Measured spectrum',
+              yaxis: {
+                range: [0.0, 40],
+                title: {
+                  text: "mW/m^2/nm"
+                }
+              }
+            }
+          } else {
+            var layout_s = {
+              title: 'Transmittance'
+            }
+            var layout_r = {
+              title: 'Measured spectrum',
+              yaxis: {
+                  title: {
+                    text: "mW/m^2/nm"
+                }
+              }
+            }
           }
           Plotly.newPlot('spectra', spectral_data, layout_s);
           Plotly.newPlot('residual', residual, layout_r);
