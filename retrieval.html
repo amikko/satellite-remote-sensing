@@ -50,13 +50,13 @@ TODO:
         <!--<div><input type="checkbox" id="fixaxtick" name="fixedaxes">Fixed y-axes</div>-->
         <div><input type="checkbox" id="turbotick" name="turbomode">CH4 turbo mode!</div>
         <div class="slidecontainer">
-          Stratospheric CH4 (30 km): <div id="ppb_30km"></div><input oninput="update_plots()" type="range" min="0" max="20" value="10" class="slider" id="ch4_30km">
+          Stratospheric CH4 (30 km): <div id="ppb_30km"></div><input oninput="update_plots()" type="range" min="0" max="10" value="5" class="slider" id="ch4_30km">
         </div>
         <div class="slidecontainer">
-          CH4 at tropopause (10 km): <div id="ppb_10km"></div><input oninput="update_plots()" type="range" min="0" max="20" value="10" class="slider" id="ch4_10km">
+          CH4 at tropopause (10 km): <div id="ppb_10km"></div><input oninput="update_plots()" type="range" min="0" max="10" value="5" class="slider" id="ch4_10km">
         </div>
         <div class="slidecontainer">
-          Tropospheric CH4 (0 km): <div id="ppb_0km"></div><input oninput="update_plots()" type="range" min="0" max="20" value="10" class="slider" id="ch4_0km">
+          Tropospheric CH4 (0 km): <div id="ppb_0km"></div><input oninput="update_plots()" type="range" min="0" max="10" value="5" class="slider" id="ch4_0km">
         </div>
         <div class="slidecontainer">
           Instrument noise level: <div id="noise_perc"></div><input oninput="update_plots()" type="range" min="0" max="60" value="0" class="slider" id="noise_slider">
@@ -135,14 +135,14 @@ TODO:
         }
 
         var n_dens = [2.731e19, 7.936e18, 2.896e17];
-        var base_prof = [5.2e13 / 10, 1.5e13 / 10, 5.5e11 / 10];
+        var base_prof = [5.2e13 / 5, 1.5e13 / 5, 5.5e11 / 5];
         var mults = [32, 10, 22];
         var real_prof = [base_prof[0] * mults[0], base_prof[1] * mults[1], base_prof[2] * mults[2]];
         var spec_real_y = radiative_transfer(solar_angle,view_angle,0.7, alts,  real_prof, xsec_ch4);
 
         function new_measurement(){
           var turbomode = document.getElementById('turbotick').checked
-          mults = [Math.floor(Math.random() * 20) + 0, Math.floor(Math.random() * 20) + 0, Math.floor(Math.random() * 20) + 0];
+          mults = [Math.floor(Math.random() * 10) + 0, Math.floor(Math.random() * 10) + 0, Math.floor(Math.random() * 10) + 0];
           if (turbomode) {
             var mult = 500
           } else {
