@@ -190,7 +190,8 @@ TODO:
           var c1 = document.getElementById('ch4_0km').value == mults[0];
           var c2 = document.getElementById('ch4_10km').value == mults[1];
           var c3 = document.getElementById('ch4_30km').value == mults[2];
-          if (c1 && c2 && c3) {
+          var c4 = document.getElementById('victory_div').innerHTML == "";
+          if (c1 && c2 && c3 && c4) {
             retrieval_won()
           }
         }
